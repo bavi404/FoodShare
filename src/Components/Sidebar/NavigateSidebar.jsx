@@ -1,11 +1,13 @@
 import React from 'react';
 import '../css/NavigateSidebar.css';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { getAuth } from "firebase/auth";
 
 const NavigateSidebar = ({ userName }) => {
     const navigate = useNavigate();
+    const location = useLocation();
     const auth = getAuth();
+
     const handleSignOut = async () => {
         try {
             await auth.signOut();
@@ -18,7 +20,12 @@ const NavigateSidebar = ({ userName }) => {
     return (
         <div className="sidebar col-md-3 col-lg-2" id="sidebar" role="navigation">
             <ul className="nav flex-column sticky-top">
-                {/* Removed Greetings block */}
+                
+                {/* ✅ Show logo only on home page */}
+                {location.pathname === '/' && (
+                    <img src="/logo.png" alt="Logo" className="sidebar-logo" />
+                )}
+
                 <li className="nav-item">
                     <Link to="/dashboard" className="nav-link">
                         <i className="fas fa-chart-bar font-weight-bold"></i>
