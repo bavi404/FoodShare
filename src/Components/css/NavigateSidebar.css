@@ -39,7 +39,13 @@
     border-radius: 6px;
     transition: background-color 0.3s ease, transform 0.2s ease;
   }
-  
+
+    .sidebar-logo {
+  width: 80px;
+  margin: 10px auto;
+  display: block;
+}
+
   /* Active or hovered item */
   .sidebar nav a:hover,
   .sidebar nav a.active {
@@ -67,4 +73,5 @@
       transform: translateX(0);
     }
   }
+
   
