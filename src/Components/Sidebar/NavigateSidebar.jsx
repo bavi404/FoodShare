@@ -18,11 +18,7 @@ const NavigateSidebar = ({ userName }) => {
     return (
         <div className="sidebar col-md-3 col-lg-2" id="sidebar" role="navigation">
             <ul className="nav flex-column sticky-top">
-                <li className="nav-item mb-3 ">
-                    <a className="nav-link text-secondary" href="#">
-                        <h5>Greetings {userName}</h5>
-                    </a>
-                </li>
+                {/* Removed Greetings block */}
                 <li className="nav-item">
                     <Link to="/dashboard" className="nav-link">
                         <i className="fas fa-chart-bar font-weight-bold"></i>
