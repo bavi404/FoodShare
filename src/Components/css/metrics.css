@@ -1,0 +1,14 @@
+.metrics-container {
+    margin-top: 20px;
+  }
+  
+  .metric-card {
+    transition: transform 0.3s ease;
+    background-color: #fff;
+    border-radius: 8px;
+  }
+  
+  .metric-card:hover {
+    transform: scale(1.05);
+  }
+  

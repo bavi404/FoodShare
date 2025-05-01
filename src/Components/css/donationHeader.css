@@ -1,0 +1,64 @@
+/* Main header container with soft green tone */
+.custom-header {
+    background-color: #d8f3dc; /* Soft green background */
+    padding: 24px 5vw;
+    text-align: center;
+    border-bottom: 2px solid #b7e4c7;
+}
+
+/* Flex layout for left/right elements */
+.header-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+/* Left-aligned text (title + description) */
+.header-left {
+    text-align: left;
+    flex: 1;
+}
+
+/* Right-aligned links (login, donate, etc.) */
+.header-right {
+    text-align: right;
+    flex: 1;
+}
+
+/* Header title */
+.header-title {
+    color: #1b4332;
+    font-size: 30px;
+    font-weight: 700;
+    margin-bottom: 8px;
+}
+
+/* Optional subheading */
+.header-description {
+    color: #2d6a4f;
+    font-size: 16px;
+    font-weight: 400;
+}
+
+/* Navigation or utility links */
+.header-link {
+    color: #2d6a4f;
+    text-decoration: none;
+    font-size: 16px;
+    margin-left: 20px;
+    font-weight: 600;
+    padding: 8px;
+    transition: all 0.3s ease;
+}
+
+/* Hover style for interactivity */
+.header-link:hover {
+    color: #40916c;
+    text-decoration: underline;
+}
+
+/* Optional icon styling inside links */
+.header-link i {
+    margin-right: 8px;
+}

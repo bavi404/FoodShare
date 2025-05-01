@@ -1,0 +1,48 @@
+/* footer.css */
+footer {
+  background-color: #d9f7e6; /* or any theme color */
+  padding: 2rem 1rem;
+  color: #000;
+  width: 100%;
+  position: relative;
+  bottom: 0;
+  left: 0;
+}
+
+.footer-wrapper {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 2rem;
+  max-width: 1200px;
+  margin: auto;
+}
+
+.footer-column {
+  flex: 1;
+  min-width: 250px;
+}
+
+.footer-column h5 {
+  font-weight: 700;
+  margin-bottom: 1rem;
+}
+
+.footer-column a {
+  display: block;
+  text-decoration: none;
+  color: #007bff;
+  margin-bottom: 0.5rem;
+}
+
+.footer-socials {
+  display: flex;
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+.footer-socials i {
+  font-size: 1.5rem;
+  color: #000;
+}

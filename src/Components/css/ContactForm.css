@@ -1,0 +1,97 @@
+@import url("https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;600;700&display=swap");
+
+* {
+  font-family: 'Montserrat', sans-serif;
+}
+
+h1 {
+  font-size: 36px !important;
+  font-weight: 600 !important;
+  color: #2d6a4f;
+}
+
+.formbold-main-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 48px 20px;
+  background-color: #f9f9f9;
+}
+
+.formbold-form-wrapper {
+  margin: 0 auto;
+  max-width: 550px;
+  width: 100%;
+  background: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
+  padding: 30px;
+}
+
+.formbold-input-flex {
+  display: flex;
+  gap: 20px;
+  margin-bottom: 22px;
+}
+.formbold-input-flex > div {
+  width: 50%;
+  display: flex;
+  flex-direction: column-reverse;
+}
+.formbold-textarea {
+  display: flex;
+  flex-direction: column-reverse;
+  margin-top: 20px;
+}
+
+.formbold-form-input {
+  width: 100%;
+  padding: 12px 0;
+  border: none;
+  border-bottom: 2px solid #cce3dc;
+  background: #ffffff;
+  font-weight: 500;
+  font-size: 16px;
+  color: #2d6a4f;
+  outline: none;
+  resize: none;
+  transition: border-color 0.3s ease;
+}
+.formbold-form-input::placeholder {
+  color: #adb5bd;
+}
+.formbold-form-input:focus {
+  border-color: #2d6a4f;
+}
+
+.formbold-form-label {
+  color: #495057;
+  font-weight: 600;
+  font-size: 14px;
+  margin-bottom: 18px;
+}
+
+.formbold-form-input:focus + .formbold-form-label {
+  color: #2d6a4f;
+}
+
+.formbold-btn {
+  display: inline-block;
+  text-align: center;
+  margin-top: 20px;
+  padding: 12px 30px;
+  border: 2px solid #2d6a4f;
+  background-color: transparent;
+  color: #2d6a4f;
+  font-size: 15px;
+  font-weight: 600;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.formbold-btn:hover {
+  background-color: #95d5b2;
+  border-color: #95d5b2;
+  color: #1b4332;
+}

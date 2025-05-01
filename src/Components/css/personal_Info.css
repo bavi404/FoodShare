@@ -1,0 +1,85 @@
+/* Container for user info section */
+.personal-info-container {
+  max-width: 900px;
+  margin: 40px auto;
+  padding: 30px;
+  background-color: #f8f9fa;
+  border-radius: 12px;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.06);
+}
+
+/* Section title */
+.personal-info-title {
+  font-size: 28px;
+  font-weight: 700;
+  color: #2d6a4f;
+  margin-bottom: 25px;
+  text-align: center;
+}
+
+/* Each info row (like Name, Email, etc.) */
+.info-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+  padding: 12px 20px;
+  border-bottom: 1px solid #dee2e6;
+}
+
+.info-label {
+  font-weight: 600;
+  color: #495057;
+  font-size: 16px;
+}
+
+.info-value {
+  color: #212529;
+  font-size: 16px;
+}
+
+/* Editable input field style */
+.info-value input {
+  border: 1px solid #ced4da;
+  border-radius: 6px;
+  padding: 6px 10px;
+  font-size: 15px;
+  width: 250px;
+  outline: none;
+  transition: border-color 0.3s ease;
+}
+
+.info-value input:focus {
+  border-color: #74c69d;
+}
+
+/* Save/Update button */
+.update-btn {
+  margin-top: 20px;
+  background-color: #2d6a4f;
+  color: #fff;
+  padding: 10px 22px;
+  font-size: 15px;
+  font-weight: 600;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.update-btn:hover {
+  background-color: #40916c;
+}
+
+/* Responsive */
+@media (max-width: 600px) {
+  .info-row {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .info-value input {
+    width: 100%;
+    margin-top: 6px;
+  }
+}

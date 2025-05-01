@@ -1,0 +1,9 @@
+.centreHeading {
+    text-align: center;
+    font-size: 36px;
+    font-weight: 600;
+    color: #2d6a4f; /* Optional: match your green theme */
+    margin-bottom: 20px;
+    font-family: 'Montserrat', sans-serif; /* Or Poppins, for consistency */
+  }
+  

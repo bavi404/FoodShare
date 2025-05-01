@@ -1,0 +1,76 @@
+/* Adds responsive and aesthetic horizontal padding */
+.customPadding {
+    padding: 0 5vw;
+}
+
+/* Soothing green tone with better readability */
+.customOverviewColor {
+    background-color: #d8f3dc; /* softer green for better contrast */
+    border-radius: 12px;
+    padding: 20px;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+}
+
+.dashboard-main {
+    padding: 30px;
+    background-color: #f7f9fb;
+    min-height: 100vh;
+    font-family: 'Poppins', sans-serif;
+  }
+  
+  .metrics-heading {
+    font-size: 24px;
+    font-weight: 600;
+    margin-bottom: 20px;
+    color: #2d6a4f;
+  }
+  
+  .metric-card {
+    border-radius: 12px;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+    transition: transform 0.3s ease;
+  }
+  
+  .metric-card:hover {
+    transform: scale(1.03);
+  }
+  
+  .metric-icon {
+    font-size: 28px;
+    margin-bottom: 8px;
+    color: #ffffff90;
+  }
+  
+  .metric-label {
+    font-size: 14px;
+    font-weight: 500;
+    color: #fff;
+  }
+  
+  .metric-value {
+    font-size: 28px;
+    font-weight: 700;
+    color: #fff;
+  }
+  
+  .section-title {
+    font-size: 22px;
+    font-weight: 600;
+    color: #333;
+    margin: 40px 0 20px 0;
+  }
+  
+  .btn-donate {
+    background-color: #007bff;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    font-weight: 600;
+    border-radius: 8px;
+    transition: background 0.3s ease;
+  }
+  
+  .btn-donate:hover {
+    background-color: #0056b3;
+  }
+  

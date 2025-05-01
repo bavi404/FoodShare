@@ -1,0 +1,45 @@
+.AboutNavheader {
+  min-height: 50vh;
+  width: 100%;
+  background-image: linear-gradient(rgba(34, 49, 63, 0.7), rgba(34, 49, 63, 0.7));
+  background-position: center;
+  background-size: cover;
+  position: relative;
+}
+
+/* Container stays flex, but more spacing and balance */
+.MissionVisionContainer {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-evenly;
+  padding: 40px 20px;
+  background-color: #fefcfb;
+}
+
+h2 {
+  color: #2d6a4f; /* earthy green for eco feel */
+  font-family: 'Segoe UI', sans-serif;
+}
+
+.Mission, .Vision {
+  margin: 30px 15px;
+  padding: 40px;
+  text-align: center;
+  flex: 1 1 40%;
+  max-width: 500px;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
+  border-radius: 12px;
+  background-color: #f9f9f9;
+  transition: transform 0.2s ease-in-out;
+}
+
+.Mission:hover, .Vision:hover {
+  transform: translateY(-5px);
+}
+
+.innerDiv .content {
+  color: #495057;
+  font-size: 1.05rem;
+  line-height: 1.6;
+  font-family: 'Roboto', sans-serif;
+}
