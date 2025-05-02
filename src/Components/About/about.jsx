@@ -5,7 +5,6 @@ import '../css/about.css';
 const About = () => {
   return (
     <>
-      {/* Header already appears globally, so this can be removed if you're sure */}
       {/* <Header /> */}
 
       <div className="MissionVisionContainer">
@@ -27,8 +26,6 @@ const About = () => {
           </div>
         </section>
       </div>
-
-      {/* Footer is already rendered in App.jsx – removed here */}
     </>
   );
 };
