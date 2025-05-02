@@ -1,4 +1,3 @@
-// PublicFeed.jsx
 import React, { useEffect, useState } from 'react';
 import { getDatabase, ref, onValue } from 'firebase/database';
 import FeedMap from './FeedMap';
@@ -13,7 +12,7 @@ const PublicFeed = () => {
   const [expirySoon, setExpirySoon] = useState(false);
   const [distanceRange, setDistanceRange] = useState(0); // 0 = all
 
-  // 🧭 Mock location (e.g., Bangalore center)
+  // Mock location (e.g., Bangalore center)
   const USER_LAT = 12.9716;
   const USER_LNG = 77.5946;
 
