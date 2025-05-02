@@ -1,4 +1,3 @@
-// NotificationBanner.jsx
 import React from 'react';
 
 const NotificationBanner = ({ user, donations }) => {
