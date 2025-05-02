@@ -20,8 +20,7 @@ const NavigateSidebar = ({ userName }) => {
     return (
         <div className="sidebar col-md-3 col-lg-2" id="sidebar" role="navigation">
             <ul className="nav flex-column sticky-top">
-                
-                {/* ✅ Show logo only on home page */}
+               
                 {location.pathname === '/' && (
                     <img src="/logo.png" alt="Logo" className="sidebar-logo" />
                 )}
