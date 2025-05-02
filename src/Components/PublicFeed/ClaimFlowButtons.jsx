@@ -1,4 +1,3 @@
-// ✅ ClaimFlowButtons.jsx (Corrected for rating flow)
 import React, { useState, useEffect } from 'react';
 import { getDatabase, ref, update, onValue } from 'firebase/database';
 import { getAuth } from 'firebase/auth';
