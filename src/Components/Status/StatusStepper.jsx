@@ -1,4 +1,3 @@
-// StatusStepper.jsx
 import React from 'react';
 
 const steps = ['Posted', 'Claimed', 'Picked Up', 'Completed', 'Expired'];
