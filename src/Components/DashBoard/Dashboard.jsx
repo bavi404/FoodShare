@@ -1,4 +1,3 @@
-// Dashboard.jsx
 import React, { useEffect, useState } from 'react';
 import { getDatabase, ref, onValue } from 'firebase/database';
 import { getAuth, onAuthStateChanged } from 'firebase/auth';
@@ -60,7 +59,7 @@ export default function Dashboard() {
           <h5 className="metrics-heading">Dashboard Overview</h5>
           <Metrics />
 
-          {/* 🔔 Notifications */}
+          {/* Notifications */}
           <NotificationBanner user={user} donations={donations} />
 
           <hr />
