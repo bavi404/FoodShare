@@ -1,9 +1,7 @@
-/* Adds responsive and aesthetic horizontal padding */
 .customPadding {
     padding: 0 5vw;
 }
 
-/* Soothing green tone with better readability */
 .customOverviewColor {
     background-color: #d8f3dc; /* softer green for better contrast */
     border-radius: 12px;
