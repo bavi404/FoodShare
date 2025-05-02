@@ -7,7 +7,6 @@
   position: relative;
 }
 
-/* Container stays flex, but more spacing and balance */
 .MissionVisionContainer {
   display: flex;
   flex-wrap: wrap;
