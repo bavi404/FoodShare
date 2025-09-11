@@ -32,15 +32,19 @@ export const getDonationsNear = async (req, res) => {
       queryOptions.status = status;
     }
 
-    // Find donations near location
-    const donations = await Donation.findNear(
-      parseFloat(lng),
-      parseFloat(lat),
-      maxDistance,
-      queryOptions
-    )
+    // Find donations near location using efficient $near on 2dsphere index
+    const donations = await Donation.find({
+      ...queryOptions,
+      location: {
+        $near: {
+          $geometry: { type: 'Point', coordinates: [parseFloat(lng), parseFloat(lat)] },
+          $maxDistance: maxDistance
+        }
+      }
+    })
     .limit(parseInt(limit))
-    .sort({ createdAt: -1 });
+    .sort({ createdAt: -1 })
+    .populate('createdBy', 'firstName lastName avatar');
 
     // Add distance to each donation
     const donationsWithDistance = donations.map(donation => {
@@ -95,6 +99,11 @@ export const createDonation = async (req, res) => {
       weight,
       images = [],
       location,
+      lat,
+      lng,
+      address,
+      city,
+      state,
       pickupDateTime,
       expirationDate
     } = req.body;
@@ -103,6 +112,31 @@ export const createDonation = async (req, res) => {
     const userId = req.user.id;
 
     // Create donation
+    // Derive GeoJSON location from either location.coordinates or lat/lng
+    let geoLocation;
+    if (location?.coordinates && Array.isArray(location.coordinates) && location.coordinates.length === 2) {
+      geoLocation = {
+        type: 'Point',
+        coordinates: [Number(location.coordinates[0]), Number(location.coordinates[1])],
+        address: location.address || '',
+        city: location.city || '',
+        state: location.state || ''
+      };
+    } else if (lat !== undefined && lng !== undefined) {
+      geoLocation = {
+        type: 'Point',
+        coordinates: [Number(lng), Number(lat)],
+        address: address || '',
+        city: city || '',
+        state: state || ''
+      };
+    } else {
+      return res.status(400).json({
+        success: false,
+        error: { code: 'VALIDATION_ERROR', message: 'Provide either location.coordinates [lng,lat] or lat/lng' }
+      });
+    }
+
     const donation = new Donation({
       title,
       description,
@@ -111,13 +145,7 @@ export const createDonation = async (req, res) => {
       quantity,
       weight,
       images,
-      location: {
-        type: 'Point',
-        coordinates: [location.coordinates[0], location.coordinates[1]],
-        address: location.address,
-        city: location.city || '',
-        state: location.state || ''
-      },
+      location: geoLocation,
       pickupDateTime: new Date(pickupDateTime),
       expirationDate: new Date(expirationDate),
       createdBy: userId,
@@ -135,6 +163,22 @@ export const createDonation = async (req, res) => {
     });
 
     // Emit real-time event
+    // Broadcast in both new and legacy event names
+    io.emit('new-donation', {
+      type: 'new-donation',
+      data: {
+        donation: {
+          id: donation._id,
+          title: donation.title,
+          location: donation.location,
+          foodType: donation.foodType,
+          status: donation.status,
+          createdAt: donation.createdAt
+        }
+      },
+      timestamp: new Date().toISOString()
+    });
+
     io.emit('donation_created', {
       type: 'donation_created',
       data: {

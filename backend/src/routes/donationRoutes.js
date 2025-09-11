@@ -14,6 +14,7 @@ const router = express.Router();
 
 // Public routes (no authentication required)
 router.get('/near', getDonationsNear);
+router.get('/nearby', getDonationsNear); // alias matching spec
 
 // Protected routes (authentication required)
 router.use(authenticateToken);

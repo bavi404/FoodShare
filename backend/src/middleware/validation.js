@@ -61,26 +61,32 @@ export const validateDonationCreation = [
     .isFloat({ min: 0 })
     .withMessage('Weight must be positive'),
   
-  body('location.coordinates')
-    .isArray({ min: 2, max: 2 })
-    .withMessage('Location coordinates must be an array of 2 numbers [longitude, latitude]'),
-  
-  body('location.coordinates.*')
-    .isNumeric()
-    .withMessage('Coordinates must be numbers'),
-  
-  body('location.coordinates[0]')
-    .isFloat({ min: -180, max: 180 })
-    .withMessage('Longitude must be between -180 and 180'),
-  
-  body('location.coordinates[1]')
-    .isFloat({ min: -90, max: 90 })
-    .withMessage('Latitude must be between -90 and 90'),
-  
-  body('location.address')
-    .trim()
-    .notEmpty()
-    .withMessage('Address is required'),
+  // Accept either full location.coordinates or lat/lng pair
+  body()
+    .custom((value, { req }) => {
+      const hasGeoArray = Array.isArray(req.body?.location?.coordinates) && req.body.location.coordinates.length === 2;
+      const hasLatLng = req.body.lat !== undefined && req.body.lng !== undefined;
+      if (!hasGeoArray && !hasLatLng) {
+        throw new Error('Provide either location.coordinates [lng,lat] or lat/lng');
+      }
+      return true;
+    }),
+
+  // If coordinates array present, validate it
+  body('location.coordinates').optional()
+    .isArray({ min: 2, max: 2 }).withMessage('location.coordinates must be [lng, lat]'),
+  body('location.coordinates.*').optional().isNumeric().withMessage('Coordinates must be numbers'),
+  body('location.coordinates[0]').optional().isFloat({ min: -180, max: 180 }).withMessage('Longitude must be between -180 and 180'),
+  body('location.coordinates[1]').optional().isFloat({ min: -90, max: 90 }).withMessage('Latitude must be between -90 and 90'),
+
+  // If lat/lng provided, validate them
+  body('lat').optional().isFloat({ min: -90, max: 90 }).withMessage('Latitude must be between -90 and 90'),
+  body('lng').optional().isFloat({ min: -180, max: 180 }).withMessage('Longitude must be between -180 and 180'),
+
+  // Optional address fields
+  body('address').optional().trim().isLength({ max: 500 }).withMessage('Address must be less than 500 characters'),
+  body('city').optional().trim().isLength({ max: 100 }).withMessage('City too long'),
+  body('state').optional().trim().isLength({ max: 100 }).withMessage('State too long'),
   
   body('pickupDateTime')
     .isISO8601()
