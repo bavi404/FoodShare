@@ -1,0 +1,51 @@
+{
+  "name": "foodshare-backend",
+  "version": "1.0.0",
+  "description": "FoodShare Backend API with Geospatial Support",
+  "main": "src/server.js",
+  "type": "module",
+  "scripts": {
+    "start": "node src/server.js",
+    "dev": "nodemon src/server.js",
+    "test": "jest",
+    "migrate": "node src/scripts/migrate.js",
+    "seed": "node src/scripts/seed.js"
+  },
+  "dependencies": {
+    "express": "^4.18.2",
+    "mongoose": "^8.0.3",
+    "socket.io": "^4.7.4",
+    "cors": "^2.8.5",
+    "helmet": "^7.1.0",
+    "express-rate-limit": "^7.1.5",
+    "jsonwebtoken": "^9.0.2",
+    "bcryptjs": "^2.4.3",
+    "multer": "^1.4.5-lts.1",
+    "sharp": "^0.33.1",
+    "aws-sdk": "^2.1509.0",
+    "google-cloud-vision": "^4.0.2",
+    "joi": "^17.11.0",
+    "dotenv": "^16.3.1",
+    "winston": "^3.11.0",
+    "compression": "^1.7.4",
+    "express-validator": "^7.0.1"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.2",
+    "jest": "^29.7.0",
+    "supertest": "^6.3.3",
+    "@types/jest": "^29.5.8"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "keywords": [
+    "food-sharing",
+    "geospatial",
+    "real-time",
+    "mongodb",
+    "websocket"
+  ],
+  "author": "Your Name",
+  "license": "MIT"
+}

@@ -1,0 +1,83 @@
+version: '3.8'
+
+services:
+  # MongoDB Database
+  mongo:
+    image: mongo:6.0
+    container_name: foodshare-mongo-dev
+    restart: unless-stopped
+    ports:
+      - "27017:27017"
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: admin
+      MONGO_INITDB_ROOT_PASSWORD: password123
+      MONGO_INITDB_DATABASE: foodshare
+    volumes:
+      - mongo_data_dev:/data/db
+      - ./mongo-init:/docker-entrypoint-initdb.d
+    networks:
+      - foodshare-dev-network
+
+  # Backend API (Development)
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+      target: builder
+    container_name: foodshare-backend-dev
+    restart: unless-stopped
+    ports:
+      - "5000:5000"
+    environment:
+      NODE_ENV: development
+      PORT: 5000
+      MONGODB_URI: mongodb://admin:password123@mongo:27017/foodshare?authSource=admin
+      JWT_SECRET: dev-jwt-secret-key
+      JWT_EXPIRES_IN: 7d
+      FRONTEND_URL: http://localhost:3000
+      GOOGLE_APPLICATION_CREDENTIALS: /app/credentials/google-credentials.json
+      GOOGLE_CLOUD_PROJECT_ID: your-project-id
+      MAPBOX_ACCESS_TOKEN: your-mapbox-access-token
+    volumes:
+      - ./backend:/app
+      - /app/node_modules
+      - ./backend/credentials:/app/credentials:ro
+      - backend_logs_dev:/app/logs
+    command: npm run dev
+    depends_on:
+      - mongo
+    networks:
+      - foodshare-dev-network
+
+  # Frontend (Development)
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+      target: builder
+    container_name: foodshare-frontend-dev
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    environment:
+      REACT_APP_API_URL: http://localhost:5000/api
+      REACT_APP_WS_URL: ws://localhost:5000
+      REACT_APP_MAPBOX_ACCESS_TOKEN: your-mapbox-access-token
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+    command: npm start
+    depends_on:
+      - backend
+    networks:
+      - foodshare-dev-network
+
+volumes:
+  mongo_data_dev:
+    driver: local
+  backend_logs_dev:
+    driver: local
+
+networks:
+  foodshare-dev-network:
+    driver: bridge
