@@ -1,74 +1,47 @@
 // WebSocket Service for Real-time Updates
+import { io } from 'socket.io-client';
+
 class WebSocketService {
   constructor() {
     this.socket = null;
     this.isConnected = false;
-    this.reconnectAttempts = 0;
-    this.maxReconnectAttempts = 5;
-    this.reconnectInterval = 5000;
     this.listeners = new Map();
     this.token = localStorage.getItem('authToken');
   }
 
-  // Connect to WebSocket server
+  // Connect to WebSocket server using socket.io
   connect() {
-    if (this.socket && this.isConnected) {
-      return;
-    }
+    if (this.socket && this.isConnected) return;
 
-    const wsUrl = process.env.REACT_APP_WS_URL || 'ws://localhost:5000';
-    
-    try {
-      this.socket = new WebSocket(`${wsUrl}?token=${this.token}`);
-      
-      this.socket.onopen = () => {
-        console.log('WebSocket connected');
-        this.isConnected = true;
-        this.reconnectAttempts = 0;
-        this.emit('connected');
-      };
+    const baseUrl = process.env.REACT_APP_API_URL || 'http://localhost:5000/api';
+    const origin = baseUrl.replace(/\/api$/, '');
 
-      this.socket.onmessage = (event) => {
-        try {
-          const data = JSON.parse(event.data);
-          this.emit(data.type, data);
-        } catch (error) {
-          console.error('Error parsing WebSocket message:', error);
-        }
-      };
+    this.socket = io(origin, {
+      transports: ['websocket'],
+      auth: { token: this.token },
+      withCredentials: true
+    });
 
-      this.socket.onclose = (event) => {
-        console.log('WebSocket disconnected:', event.code, event.reason);
-        this.isConnected = false;
-        this.emit('disconnected', { code: event.code, reason: event.reason });
-        
-        // Attempt to reconnect if not a clean close
-        if (event.code !== 1000 && this.reconnectAttempts < this.maxReconnectAttempts) {
-          this.scheduleReconnect();
-        }
-      };
+    this.socket.on('connect', () => {
+      this.isConnected = true;
+      this.emit('connected');
+    });
 
-      this.socket.onerror = (error) => {
-        console.error('WebSocket error:', error);
-        this.emit('error', error);
-      };
+    this.socket.on('disconnect', (reason) => {
+      this.isConnected = false;
+      this.emit('disconnected', { reason });
+    });
 
-    } catch (error) {
-      console.error('Failed to create WebSocket connection:', error);
-      this.emit('error', error);
-    }
+    // Relay known server events
+    ['new-donation', 'donation_created', 'donation_updated', 'donation_claimed', 'system_message', 'error']
+      .forEach((event) => {
+        this.socket.on(event, (payload) => this.emit(event, payload));
+      });
   }
 
   // Schedule reconnection attempt
   scheduleReconnect() {
-    this.reconnectAttempts++;
-    console.log(`Scheduling reconnect attempt ${this.reconnectAttempts}/${this.maxReconnectAttempts} in ${this.reconnectInterval}ms`);
-    
-    setTimeout(() => {
-      if (!this.isConnected) {
-        this.connect();
-      }
-    }, this.reconnectInterval);
+    // socket.io handles reconnection by default
   }
 
   // Disconnect from WebSocket server
@@ -81,12 +54,9 @@ class WebSocketService {
   }
 
   // Send message to server
-  send(type, data = {}) {
-    if (this.socket && this.isConnected) {
-      this.socket.send(JSON.stringify({ type, data }));
-    } else {
-      console.warn('WebSocket not connected, cannot send message');
-    }
+  send(event, data = {}) {
+    if (!this.socket || !this.isConnected) return;
+    this.socket.emit(event, data);
   }
 
   // Update user location

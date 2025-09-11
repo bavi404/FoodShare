@@ -1,139 +1,87 @@
-import React, { useEffect, useState } from 'react';
-import { getDatabase, ref, onValue } from 'firebase/database';
-import FeedMap from './FeedMap';
-import DonationCard from './DonationCard';
-import Filters from './Filters';
+import EnhancedFeedMap from './EnhancedFeedMap';
+import apiService from '../../services/apiService';
+import wsService from '../../services/websocketService';
 
 const PublicFeed = () => {
   const [donations, setDonations] = useState([]);
-  const [filtered, setFiltered] = useState([]);
-  const [filterType, setFilterType] = useState('');
-  const [postTypeFilter, setPostTypeFilter] = useState('');
-  const [expirySoon, setExpirySoon] = useState(false);
-  const [distanceRange, setDistanceRange] = useState(0); // 0 = all
-
-  // Mock location (e.g., Bangalore center)
-  const USER_LAT = 12.9716;
-  const USER_LNG = 77.5946;
-
-  const getDistanceKm = (lat1, lon1, lat2, lon2) => {
-    const R = 6371;
-    const dLat = ((lat2 - lat1) * Math.PI) / 180;
-    const dLon = ((lon2 - lon1) * Math.PI) / 180;
-    const a =
-      Math.sin(dLat / 2) * Math.sin(dLat / 2) +
-      Math.cos((lat1 * Math.PI) / 180) *
-      Math.cos((lat2 * Math.PI) / 180) *
-      Math.sin(dLon / 2) *
-      Math.sin(dLon / 2);
-    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-    return R * c;
-  };
+  const [userLocation, setUserLocation] = useState(null);
+  const [radiusKm, setRadiusKm] = useState(10);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
 
   useEffect(() => {
-    const db = getDatabase();
-    const donationRef = ref(db, 'donationRequests');
-  
-    onValue(donationRef, (snapshot) => {
-      const data = snapshot.val();
-      if (data) {
-        // Auto-expire logic
-        Object.entries(data).forEach(([id, val]) => {
-          const expDate = new Date(val.expirationDate);
-          const today = new Date();
-  
-          if (
-            val.status !== 'picked-up' &&
-            val.status !== 'expired' &&
-            expDate < today
-          ) {
-            update(ref(db, `donationRequests/${id}`), { status: 'expired' });
-          }
-        });
-  
-        const list = Object.entries(data)
-          .map(([id, val]) => ({ id, ...val }))
-          .filter((d) =>
-            d.status === 'available' ||
-            d.status === 'claimed' ||
-            d.status === 'approved'
-          );
-  
-        setDonations(list);
-        setFiltered(list);
+    const fetchNearby = async (lat, lng, radius) => {
+      try {
+        const res = await apiService.getDonationsNear(lat, lng, radius, { status: 'available' });
+        setDonations(res.data || []);
+      } catch (e) {
+        setError(e.message || 'Failed to load nearby donations');
+      } finally {
+        setLoading(false);
       }
-    });
-  }, []);
-  
+    };
+
+    if (!('geolocation' in navigator)) {
+      setError('Geolocation not supported');
+      setLoading(false);
+      return;
+    }
+
+    navigator.geolocation.getCurrentPosition(
+      (pos) => {
+        const coords = { latitude: pos.coords.latitude, longitude: pos.coords.longitude };
+        setUserLocation(coords);
+        fetchNearby(coords.latitude, coords.longitude, radiusKm);
+      },
+      (err) => {
+        setError(err.message || 'Failed to get location');
+        setLoading(false);
+      },
+      { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
+    );
+  }, [radiusKm]);
 
   useEffect(() => {
-    let filteredList = [...donations];
+    wsService.connect();
+    const onNewDonation = (payload) => {
+      const d = payload?.data?.donation || payload?.donation || payload;
+      if (!d || !d.location?.coordinates) return;
+      setDonations((prev) => (prev.some((x) => (x.id || x._id) === (d.id || d._id)) ? prev : [d, ...prev]));
+    };
+    wsService.on('new-donation', onNewDonation);
+    wsService.on('donation_created', onNewDonation);
+    return () => {
+      wsService.off('new-donation', onNewDonation);
+      wsService.off('donation_created', onNewDonation);
+    };
+  }, []);
 
-    if (filterType) {
-      filteredList = filteredList.filter(
-        (d) => d.foodType?.toLowerCase() === filterType.toLowerCase()
-      );
-    }
-
-    if (postTypeFilter) {
-      filteredList = filteredList.filter(
-        (d) => d.postType?.toLowerCase() === postTypeFilter.toLowerCase()
-      );
-    }
-
-    if (expirySoon) {
-      const today = new Date();
-      const soon = new Date();
-      soon.setDate(today.getDate() + 2);
-
-      filteredList = filteredList.filter((d) => {
-        if (!d.expirationDate) return false;
-        const exp = new Date(d.expirationDate);
-        return exp <= soon;
-      });
-    }
-
-    if (distanceRange > 0) {
-      filteredList = filteredList.filter((d) => {
-        const loc = d.location;
-        if (!loc || !loc.lat || !loc.lng) return false;
-        const distance = getDistanceKm(USER_LAT, USER_LNG, loc.lat, loc.lng);
-        return distance <= distanceRange;
-      });
-    }
-
-    setFiltered(filteredList);
-  }, [filterType, postTypeFilter, expirySoon, distanceRange, donations]);
+  if (loading) {
+    return <div className="container mt-4"><p>Loading nearby donations...</p></div>;
+  }
+  if (error) {
+    return <div className="container mt-4"><p>{error}</p></div>;
+  }
 
   return (
     <div className="container mt-4">
-      <h2 className="mb-3">🍱 Available Donations & Requests</h2>
-
-      <Filters
-        filterType={filterType}
-        setFilterType={setFilterType}
-        postTypeFilter={postTypeFilter}
-        setPostTypeFilter={setPostTypeFilter}
-        expirySoon={expirySoon}
-        setExpirySoon={setExpirySoon}
-        distanceRange={distanceRange}
-        setDistanceRange={setDistanceRange}
-      />
-
-      <div className="row">
-        <div className="col-md-6">
-          {filtered.length === 0 ? (
-            <p>No posts match your filters.</p>
-          ) : (
-            filtered.map((donation) => (
-              <DonationCard key={donation.id} donation={donation} />
-            ))
-          )}
-        </div>
-        <div className="col-md-6">
-          <FeedMap donations={filtered} />
-        </div>
+      <h2 className="mb-3">🍱 Nearby Donations</h2>
+      <div className="mb-3">
+        <label>Radius: </label>
+        <select value={radiusKm} onChange={(e) => setRadiusKm(Number(e.target.value))} style={{ marginLeft: 8 }}>
+          <option value={5}>5 km</option>
+          <option value={10}>10 km</option>
+          <option value={25}>25 km</option>
+          <option value={50}>50 km</option>
+        </select>
       </div>
+      <EnhancedFeedMap
+        donations={donations}
+        userLocation={userLocation}
+        radius={radiusKm}
+        onDonationSelect={() => {}}
+        onLocationChange={() => {}}
+      />
     </div>
   );
 };
